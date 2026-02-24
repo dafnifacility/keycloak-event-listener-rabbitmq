@@ -1,17 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!--This file was edited by Sarah Byrne to use updated versions to support Keycloak v26-->
     
-    <groupId>com.github.aznamier.keycloak.event.provider</groupId>
+    <groupId>stfc.dafni</groupId>
     <artifactId>keycloak-to-rabbit</artifactId>
     <packaging>jar</packaging>
-	<version>3.0.5</version>
+	<version>4.0.0</version>
     
 
 
     <name>Keycloak: Event Publisher to RabbitMQ</name>
     <properties>
-    	<keycloak.version>21.1.2</keycloak.version>
+    	<keycloak.version>26.5.4</keycloak.version>
     	<jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
     </properties>
     
@@ -62,8 +63,14 @@
 		<dependency>
 		    <groupId>com.rabbitmq</groupId>
 		    <artifactId>amqp-client</artifactId>
-		    <version>5.14.2</version>
+		    <version>5.25.0</version>
 		</dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
         
     </dependencies>
 
@@ -74,8 +81,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
             
@@ -100,14 +107,7 @@
 				  </execution>
 				</executions>
 			</plugin>
-			
-<!--            <plugin>-->
-<!--                <groupId>org.wildfly.plugins</groupId>-->
-<!--                <artifactId>wildfly-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skip>false</skip>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+
         </plugins>
     </build>
 </project>
