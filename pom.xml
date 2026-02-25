@@ -19,8 +19,8 @@
 	<distributionManagement>
 	   <repository>
 	     <id>github</id>
-	     <name>GitHub AZNAMIER Apache Maven Packages</name>
-	     <url>https://maven.pkg.github.com/aznamier/keycloak-event-listener-rabbitmq</url>
+	     <name>GitHub DAFNI Apache Maven Packages</name>
+	     <url>https://maven.pkg.github.com/dafnifacility/keycloak-event-listener-rabbitmq</url>
 	   </repository>
 	</distributionManagement>
 	
