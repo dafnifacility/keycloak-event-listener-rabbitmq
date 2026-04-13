@@ -10,7 +10,7 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -31,6 +31,12 @@ jobs:
 
     - name: Build with Maven
       run: ./mvnw -B -DskipTests package --file pom.xml
+
+    - name: Upload JARs to GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          target/*.jar
 
     - name: Publish to GitHub Packages Apache Maven
       run: >-

@@ -6,7 +6,7 @@
     <groupId>stfc.dafni</groupId>
     <artifactId>keycloak-to-rabbit</artifactId>
     <packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
     
 
 
