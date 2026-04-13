@@ -59,10 +59,12 @@ therefore its easy for Rabbit client to subscribe to selective combinations eg:
 
 #### Configuration 
 ###### Recommended: OPTION 1: just configure **ENVIRONMENT VARIABLES**
+  - `ALLOW_REALM_RMQ_CREDENTIALS` - default: *false*
   - `KK_TO_RMQ_URL` - default: *localhost*
   - `KK_TO_RMQ_PORT` - default: *5672*
   - `KK_TO_RMQ_VHOST` - default: *empty*
   - `KK_TO_RMQ_EXCHANGE` - default: *amq.topic*
+  - `KK_TO_RMQ_CHANNEL_POOL_SIZE` - default: *16*
   - `KK_TO_RMQ_USERNAME` - default: *admin*
   - `KK_TO_RMQ_PASSWORD` - default: *admin*
   - `KK_TO_RMQ_USE_TLS` - default: *false*
@@ -70,6 +72,80 @@ therefore its easy for Rabbit client to subscribe to selective combinations eg:
   - `KK_TO_RMQ_KEY_STORE_PASS` - default: *empty*
   - `KK_TO_RMQ_TRUST_STORE` - default: *empty*
   - `KK_TO_RMQ_TRUST_STORE_PASS` - default: *empty*
+
+###### Realm-specific overrides
+
+By default, realm-specific RabbitMQ credentials are disabled. If `ALLOW_REALM_RMQ_CREDENTIALS` is not set or is `false`, the provider works like before and uses only the global RabbitMQ settings.
+
+To enable per-realm RabbitMQ credentials, set:
+
+```bash
+export ALLOW_REALM_RMQ_CREDENTIALS=true
+```
+
+You can override any RabbitMQ setting per realm. The provider resolves settings in this order:
+1. Realm attribute `kk.to.rmq.<setting>`
+2. Realm-specific environment variable `KK_TO_RMQ_REALM_<REALM>_<SETTING>`
+3. Global provider/environment setting
+
+Supported per-realm settings are:
+* `url`
+* `port`
+* `vhost`
+* `exchange`
+* `channel_pool_size`
+* `username`
+* `password`
+* `use_tls`
+* `key_store`
+* `key_store_pass`
+* `trust_store`
+* `trust_store_pass`
+
+Examples:
+* realm attribute `kk.to.rmq.username=orders-user`
+* realm attribute `kk.to.rmq.password=secret`
+* environment variable `KK_TO_RMQ_REALM_MY_REALM_USERNAME=orders-user`
+* environment variable `KK_TO_RMQ_REALM_MY_REALM_PASSWORD=secret`
+
+Quick usage examples:
+
+Global-only mode, old behavior:
+
+```bash
+export KK_TO_RMQ_URL=rabbitmq.internal
+export KK_TO_RMQ_USERNAME=global-user
+export KK_TO_RMQ_PASSWORD=global-pass
+unset ALLOW_REALM_RMQ_CREDENTIALS
+```
+
+Per-realm mode with env vars:
+
+```bash
+export ALLOW_REALM_RMQ_CREDENTIALS=true
+export KK_TO_RMQ_URL=rabbitmq.internal
+export KK_TO_RMQ_USERNAME=global-user
+export KK_TO_RMQ_PASSWORD=global-pass
+
+export KK_TO_RMQ_REALM_MASTER_USERNAME=master-user
+export KK_TO_RMQ_REALM_MASTER_PASSWORD=master-pass
+
+export KK_TO_RMQ_REALM_CUSTOMERS_EU_USERNAME=customers-user
+export KK_TO_RMQ_REALM_CUSTOMERS_EU_PASSWORD=customers-pass
+```
+
+Per-realm mode with realm attributes:
+
+```text
+kk.to.rmq.username=realm-user
+kk.to.rmq.password=realm-pass
+kk.to.rmq.url=rabbitmq-per-realm.internal
+kk.to.rmq.vhost=/realm-vhost
+```
+
+Realm names are normalized in environment variables by converting them to upper case and replacing non-alphanumeric characters with `_`. For example, realm `my-realm.eu` becomes `MY_REALM_EU`.
+
+Connections are cached by the effective RabbitMQ connection settings, and channels are reused from a pool. Realms that resolve to the same connection settings will share the same connection pool.
 
 ###### Deprecated OPTION 2: edit Keycloak subsystem of WildFly (Keycloak 16 and older) standalone.xml or standalone-ha.xml:
 
@@ -81,6 +157,8 @@ therefore its easy for Rabbit client to subscribe to selective combinations eg:
             <property name="port" value="${env.KK_TO_RMQ_PORT:5672}"/>
             <property name="vhost" value="${env.KK_TO_RMQ_VHOST:}"/>
             <property name="exchange" value="${env.KK_TO_RMQ_EXCHANGE:amq.topic}"/>
+            <property name="channel_pool_size" value="${env.KK_TO_RMQ_CHANNEL_POOL_SIZE:16}"/>
+            <property name="allow_realm_rmq_credentials" value="${env.ALLOW_REALM_RMQ_CREDENTIALS:false}"/>
             <property name="use_tls" value="${env.KK_TO_RMQ_USE_TLS:false}"/>
             <property name="key_store" value="${env.KK_TO_RMQ_KEY_STORE:}"/>
             <property name="key_store_pass" value="${env.KK_TO_RMQ_KEY_STORE_PASS:}"/> 
